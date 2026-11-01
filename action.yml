@@ -1,0 +1,52 @@
+name: DSH PR Review
+description: Run a cost-capped DSH review of a pull request diff and optionally post it as a PR comment.
+branding:
+  icon: git-pull-request
+  color: purple
+inputs:
+  github-token:
+    description: Token with pull-requests read/write and contents read.
+    required: true
+  api-key:
+    description: DeepSeek API key used by the headless DSH profile.
+    required: true
+  comment:
+    description: Post the review as a PR comment (true/false).
+    required: false
+    default: "true"
+  max-minutes:
+    description: Hard wall-clock cap for the review step.
+    required: false
+    default: "15"
+  dsh-version:
+    description: npm version of @deepseek-ai/dsh to install.
+    required: false
+    default: "latest"
+runs:
+  using: composite
+  steps:
+    - name: Set up Node 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+    - name: Install DSH and the review bundle
+      shell: bash
+      env:
+        DSH_VERSION: ${{ inputs.dsh-version }}
+      run: |
+        npm install -g "@deepseek-ai/dsh@${DSH_VERSION}"
+        dsh plugin --profile headless add "$GITHUB_ACTION_PATH"
+    - name: Review the diff
+      id: review
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        DEEPSEEK_API_KEY: ${{ inputs.api-key }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        COMMENT: ${{ inputs.comment }}
+        MAX_MINUTES: ${{ inputs.max-minutes }}
+      run: bash "$GITHUB_ACTION_PATH/scripts/review.sh"
+outputs:
+  review_path:
+    description: Path to the generated Markdown review.
+    value: ${{ steps.review.outputs.review_path }}
