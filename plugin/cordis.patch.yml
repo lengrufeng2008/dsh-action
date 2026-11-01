@@ -1,0 +1,4 @@
+- insert:
+    - id: pr-review
+      name: dsh-action
+      config: {}
