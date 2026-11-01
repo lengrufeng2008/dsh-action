@@ -1,0 +1,36 @@
+{
+  "name": "dsh-action",
+  "version": "0.1.0",
+  "description": "Cost-capped DSH pull-request review as a GitHub Action: install the pr-review skill into the headless profile, review a PR diff, and optionally comment.",
+  "type": "module",
+  "exports": {
+    ".": "./plugin/index.js",
+    "./plugin": "./plugin/index.js"
+  },
+  "files": [
+    "plugin",
+    "skills",
+    "scripts",
+    "action.yml",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./plugin/cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": ["dsh", "deepseek-harness", "github-action", "pull-request", "review", "ci"],
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lengrufeng2008/dsh-action"
+  }
+}
